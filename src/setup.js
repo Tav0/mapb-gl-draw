@@ -1,7 +1,7 @@
-const events = require('./events');
-const Store = require('./store');
-const ui = require('./ui');
-const Constants = require('./constants');
+const events = require("./events");
+const Store = require("./store");
+const ui = require("./ui");
+const Constants = require("./constants");
 
 module.exports = function(ctx) {
 
@@ -43,7 +43,7 @@ module.exports = function(ctx) {
       let intervalId = null;
 
       const connect = () => {
-        map.off('load', connect);
+        map.off("load", connect);
         clearInterval(intervalId);
         setup.addLayers();
         ctx.store.storeMapConfig();
@@ -53,7 +53,7 @@ module.exports = function(ctx) {
       if (map.loaded()) {
         connect();
       } else {
-        map.on('load', connect);
+        map.on("load", connect);
         intervalId = setInterval(() => { if (map.loaded()) connect(); }, 16);
       }
 
@@ -67,7 +67,7 @@ module.exports = function(ctx) {
           type: Constants.geojsonTypes.FEATURE_COLLECTION,
           features: []
         },
-        type: 'geojson'
+        type: "geojson"
       });
 
       // hot features style
@@ -76,7 +76,7 @@ module.exports = function(ctx) {
           type: Constants.geojsonTypes.FEATURE_COLLECTION,
           features: []
         },
-        type: 'geojson'
+        type: "geojson"
       });
 
       ctx.options.styles.forEach(style => {

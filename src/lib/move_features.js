@@ -1,5 +1,5 @@
-const constrainFeatureMovement = require('./constrain_feature_movement');
-const Constants = require('../constants');
+const constrainFeatureMovement = require("./constrain_feature_movement");
+const Constants = require("../constants");
 
 module.exports = function(features, delta) {
   const constrainedDelta = constrainFeatureMovement(features.map(feature => feature.toGeoJSON()), delta);
@@ -29,5 +29,9 @@ module.exports = function(features, delta) {
     }
 
     feature.incomingCoords(nextCoordinates);
+
+    if (feature.properties.circle) {
+      feature.updateCenter(constrainedDelta);
+    }
   });
 };

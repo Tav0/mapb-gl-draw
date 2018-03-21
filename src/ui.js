@@ -1,7 +1,7 @@
-const xtend = require('xtend');
-const Constants = require('./constants');
+const xtend = require("xtend");
+const Constants = require("./constants");
 
-const classTypes = ['mode', 'feature', 'mouse'];
+const classTypes = ["mode", "feature", "mouse"];
 
 module.exports = function(ctx) {
 
@@ -52,12 +52,12 @@ module.exports = function(ctx) {
   }
 
   function createControlButton(id, options = {}) {
-    const button = document.createElement('button');
+    const button = document.createElement("button");
     button.className = `${Constants.classes.CONTROL_BUTTON} ${options.className}`;
-    button.setAttribute('title', options.title);
+    button.setAttribute("title", options.title);
     options.container.appendChild(button);
 
-    button.addEventListener('click', (e) => {
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -86,7 +86,7 @@ module.exports = function(ctx) {
     const button = buttonElements[id];
     if (!button) return;
 
-    if (button && id !== 'trash') {
+    if (button && id !== "trash") {
       button.classList.add(Constants.classes.ACTIVE_BUTTON);
       activeButton = button;
     }
@@ -94,7 +94,7 @@ module.exports = function(ctx) {
 
   function addButtons() {
     const controls = ctx.options.controls;
-    const controlGroup = document.createElement('div');
+    const controlGroup = document.createElement("div");
     controlGroup.className = `${Constants.classes.CONTROL_GROUP} ${Constants.classes.CONTROL_BASE}`;
 
     if (!controls) return controlGroup;
@@ -103,7 +103,7 @@ module.exports = function(ctx) {
       buttonElements[Constants.types.LINE] = createControlButton(Constants.types.LINE, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_LINE,
-        title: `LineString tool ${ctx.options.keybindings ? '(l)' : ''}`,
+        title: `LineString tool ${ctx.options.keybindings ? "(l)" : ""}`,
         onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_LINE_STRING)
       });
     }
@@ -112,7 +112,7 @@ module.exports = function(ctx) {
       buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POLYGON,
-        title: `Polygon tool ${ctx.options.keybindings ? '(p)' : ''}`,
+        title: `Polygon tool ${ctx.options.keybindings ? "(p)" : ""}`,
         onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POLYGON)
       });
     }
@@ -121,16 +121,25 @@ module.exports = function(ctx) {
       buttonElements[Constants.types.POINT] = createControlButton(Constants.types.POINT, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POINT,
-        title: `Marker tool ${ctx.options.keybindings ? '(m)' : ''}`,
+        title: `Marker tool ${ctx.options.keybindings ? "(m)" : ""}`,
         onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POINT)
       });
     }
 
+    if (controls[Constants.types.CIRCLE]) {
+      buttonElements[Constants.types.CIRCLE] = createControlButton(Constants.types.CIRCLE, {
+        container: controlGroup,
+        className: Constants.classes.CONTROL_BUTTON_CIRCLE,
+        title: `Circle tool ${ctx.options.keybindings && "(c)"}`,
+        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_CIRCLE)
+      });
+    }
+
     if (controls.trash) {
-      buttonElements.trash = createControlButton('trash', {
+      buttonElements.trash = createControlButton("trash", {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_TRASH,
-        title: 'Delete',
+        title: "Delete",
         onActivate: () => {
           ctx.events.trash();
         }
@@ -138,10 +147,10 @@ module.exports = function(ctx) {
     }
 
     if (controls.combine_features) {
-      buttonElements.combine_features = createControlButton('combineFeatures', {
+      buttonElements.combine_features = createControlButton("combineFeatures", {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_COMBINE_FEATURES,
-        title: 'Combine',
+        title: "Combine",
         onActivate: () => {
           ctx.events.combineFeatures();
         }
@@ -149,10 +158,10 @@ module.exports = function(ctx) {
     }
 
     if (controls.uncombine_features) {
-      buttonElements.uncombine_features = createControlButton('uncombineFeatures', {
+      buttonElements.uncombine_features = createControlButton("uncombineFeatures", {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_UNCOMBINE_FEATURES,
-        title: 'Uncombine',
+        title: "Uncombine",
         onActivate: () => {
           ctx.events.uncombineFeatures();
         }

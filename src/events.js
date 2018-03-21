@@ -1,10 +1,10 @@
-const setupModeHandler = require('./lib/mode_handler');
-const getFeaturesAndSetCursor = require('./lib/get_features_and_set_cursor');
-const featuresAt = require('./lib/features_at');
-const isClick = require('./lib/is_click');
-const isTap = require('./lib/is_tap');
-const Constants = require('./constants');
-const objectToMode = require('./modes/object_to_mode');
+const setupModeHandler = require("./lib/mode_handler");
+const getFeaturesAndSetCursor = require("./lib/get_features_and_set_cursor");
+const featuresAt = require("./lib/features_at");
+const isClick = require("./lib/is_click");
+const isTap = require("./lib/is_tap");
+const Constants = require("./constants");
+const objectToMode = require("./modes/object_to_mode");
 
 module.exports = function(ctx) {
 
@@ -127,7 +127,7 @@ module.exports = function(ctx) {
   const isKeyModeValid = (code) => !(code === 8 || code === 46 || (code >= 48 && code <= 57));
 
   events.keydown = function(event) {
-    if ((event.srcElement || event.target).classList[0] !== 'mapboxgl-canvas') return; // we only handle events on the map
+    if ((event.srcElement || event.target).classList[0] !== "mapboxgl-canvas") return; // we only handle events on the map
 
     if ((event.keyCode === 8 || event.keyCode === 46) && ctx.options.controls.trash) {
       event.preventDefault();
@@ -154,7 +154,7 @@ module.exports = function(ctx) {
   };
 
   events.data = function(event) {
-    if (event.dataType === 'style') {
+    if (event.dataType === "style") {
       const { setup, map, options, store } = ctx;
       const hasLayers = options.styles.some(style => map.getLayer(style.id));
       if (!hasLayers) {
@@ -193,7 +193,7 @@ module.exports = function(ctx) {
   function actionable(actions) {
     let changed = false;
     Object.keys(actions).forEach(action => {
-      if (actionState[action] === undefined) throw new Error('Invalid action type');
+      if (actionState[action] === undefined) throw new Error("Invalid action type");
       if (actionState[action] !== actions[action]) changed = true;
       actionState[action] = actions[action];
     });
@@ -219,37 +219,37 @@ module.exports = function(ctx) {
       }
     },
     addEventListeners: function() {
-      ctx.map.on('mousemove', events.mousemove);
-      ctx.map.on('mousedown', events.mousedown);
-      ctx.map.on('mouseup', events.mouseup);
-      ctx.map.on('data', events.data);
+      ctx.map.on("mousemove", events.mousemove);
+      ctx.map.on("mousedown", events.mousedown);
+      ctx.map.on("mouseup", events.mouseup);
+      ctx.map.on("data", events.data);
 
-      ctx.map.on('touchmove', events.touchmove);
-      ctx.map.on('touchstart', events.touchstart);
-      ctx.map.on('touchend', events.touchend);
+      ctx.map.on("touchmove", events.touchmove);
+      ctx.map.on("touchstart", events.touchstart);
+      ctx.map.on("touchend", events.touchend);
 
-      ctx.container.addEventListener('mouseout', events.mouseout);
+      ctx.container.addEventListener("mouseout", events.mouseout);
 
       if (ctx.options.keybindings) {
-        ctx.container.addEventListener('keydown', events.keydown);
-        ctx.container.addEventListener('keyup', events.keyup);
+        ctx.container.addEventListener("keydown", events.keydown);
+        ctx.container.addEventListener("keyup", events.keyup);
       }
     },
     removeEventListeners: function() {
-      ctx.map.off('mousemove', events.mousemove);
-      ctx.map.off('mousedown', events.mousedown);
-      ctx.map.off('mouseup', events.mouseup);
-      ctx.map.off('data', events.data);
+      ctx.map.off("mousemove", events.mousemove);
+      ctx.map.off("mousedown", events.mousedown);
+      ctx.map.off("mouseup", events.mouseup);
+      ctx.map.off("data", events.data);
 
-      ctx.map.off('touchmove', events.touchmove);
-      ctx.map.off('touchstart', events.touchstart);
-      ctx.map.off('touchend', events.touchend);
+      ctx.map.off("touchmove", events.touchmove);
+      ctx.map.off("touchstart", events.touchstart);
+      ctx.map.off("touchend", events.touchend);
 
-      ctx.container.removeEventListener('mouseout', events.mouseout);
+      ctx.container.removeEventListener("mouseout", events.mouseout);
 
       if (ctx.options.keybindings) {
-        ctx.container.removeEventListener('keydown', events.keydown);
-        ctx.container.removeEventListener('keyup', events.keyup);
+        ctx.container.removeEventListener("keydown", events.keydown);
+        ctx.container.removeEventListener("keyup", events.keyup);
       }
     },
     trash: function(options) {
