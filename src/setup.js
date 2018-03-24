@@ -4,7 +4,6 @@ const ui = require("./ui");
 const Constants = require("./constants");
 
 module.exports = function(ctx) {
-
   let controlContainer = null;
 
   const setup = {
@@ -17,7 +16,8 @@ module.exports = function(ctx) {
       ctx.container = null;
       ctx.store = null;
 
-      if (controlContainer && controlContainer.parentNode) controlContainer.parentNode.removeChild(controlContainer);
+      if (controlContainer && controlContainer.parentNode)
+        controlContainer.parentNode.removeChild(controlContainer);
       controlContainer = null;
 
       return this;
@@ -28,7 +28,6 @@ module.exports = function(ctx) {
       ctx.ui = ui(ctx);
       ctx.container = map.getContainer();
       ctx.store = new Store(ctx);
-
 
       controlContainer = ctx.ui.addButtons();
 
@@ -54,7 +53,9 @@ module.exports = function(ctx) {
         connect();
       } else {
         map.on("load", connect);
-        intervalId = setInterval(() => { if (map.loaded()) connect(); }, 16);
+        intervalId = setInterval(() => {
+          if (map.loaded()) connect();
+        }, 16);
       }
 
       ctx.events.start();
