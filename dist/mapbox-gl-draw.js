@@ -32,7 +32,7 @@ module.exports = function (options) {
 
 module.exports.modes = require("./src/modes");
 
-},{"./src/api":22,"./src/constants":23,"./src/modes":56,"./src/options":61,"./src/setup":63}],2:[function(require,module,exports){
+},{"./src/api":22,"./src/constants":23,"./src/modes":58,"./src/options":63,"./src/setup":65}],2:[function(require,module,exports){
 module.exports = Extent;
 
 function Extent(bbox) {
@@ -4648,28 +4648,28 @@ function extend() {
 }
 
 },{}],22:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var isEqual = require('lodash.isequal');
-var normalize = require('@mapbox/geojson-normalize');
-var hat = require('hat');
-var featuresAt = require('./lib/features_at');
-var stringSetsAreEqual = require('./lib/string_sets_are_equal');
-var geojsonhint = require('@mapbox/geojsonhint');
-var Constants = require('./constants');
-var StringSet = require('./lib/string_set');
+var isEqual = require("lodash.isequal");
+var normalize = require("@mapbox/geojson-normalize");
+var hat = require("hat");
+var featuresAt = require("./lib/features_at");
+var stringSetsAreEqual = require("./lib/string_sets_are_equal");
+var geojsonhint = require("@mapbox/geojsonhint");
+var Constants = require("./constants");
+var StringSet = require("./lib/string_set");
 
 var featureTypes = {
-  Polygon: require('./feature_types/polygon'),
-  LineString: require('./feature_types/line_string'),
-  Point: require('./feature_types/point'),
-  MultiPolygon: require('./feature_types/multi_feature'),
-  MultiLineString: require('./feature_types/multi_feature'),
-  MultiPoint: require('./feature_types/multi_feature')
+  Polygon: require("./feature_types/polygon"),
+  LineString: require("./feature_types/line_string"),
+  Circle: require("./feature_types/circle"),
+  Point: require("./feature_types/point"),
+  MultiPolygon: require("./feature_types/multi_feature"),
+  MultiLineString: require("./feature_types/multi_feature"),
+  MultiPoint: require("./feature_types/multi_feature")
 };
 
 module.exports = function (ctx, api) {
-
   api.modes = Constants.modes;
 
   api.getFeatureIdsAt = function (point) {
@@ -4712,7 +4712,7 @@ module.exports = function (ctx, api) {
 
   api.set = function (featureCollection) {
     if (featureCollection.type === undefined || featureCollection.type !== Constants.geojsonTypes.FEATURE_COLLECTION || !Array.isArray(featureCollection.features)) {
-      throw new Error('Invalid FeatureCollection');
+      throw new Error("Invalid FeatureCollection");
     }
     var renderBatch = ctx.store.createRenderBatch();
     var toDelete = ctx.store.getAllIds().slice();
@@ -4732,7 +4732,7 @@ module.exports = function (ctx, api) {
 
   api.add = function (geojson) {
     var errors = geojsonhint.hint(geojson, { precisionWarning: false }).filter(function (e) {
-      return e.level !== 'message';
+      return e.level !== "message";
     });
     if (errors.length) {
       throw new Error(errors[0].message);
@@ -4743,14 +4743,14 @@ module.exports = function (ctx, api) {
       feature.id = feature.id || hat();
 
       if (feature.geometry === null) {
-        throw new Error('Invalid geometry: null');
+        throw new Error("Invalid geometry: null");
       }
 
       if (ctx.store.get(feature.id) === undefined || ctx.store.get(feature.id).type !== feature.geometry.type) {
         // If the feature has not yet been created ...
         var Model = featureTypes[feature.geometry.type];
         if (Model === undefined) {
-          throw new Error('Invalid geometry type: ' + feature.geometry.type + '.');
+          throw new Error("Invalid geometry type: " + feature.geometry.type + ".");
         }
         var internalFeature = new Model(ctx, feature);
         ctx.store.add(internalFeature);
@@ -4790,7 +4790,9 @@ module.exports = function (ctx, api) {
     // If we were in direct select mode and our selected feature no longer exists
     // (because it was deleted), we need to get out of that mode.
     if (api.getMode() === Constants.modes.DIRECT_SELECT && !ctx.store.getSelectedIds().length) {
-      ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, undefined, { silent: true });
+      ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, undefined, {
+        silent: true
+      });
     } else {
       ctx.store.render();
     }
@@ -4803,7 +4805,9 @@ module.exports = function (ctx, api) {
     // If we were in direct select mode, now our selected feature no longer exists,
     // so escape that mode.
     if (api.getMode() === Constants.modes.DIRECT_SELECT) {
-      ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, undefined, { silent: true });
+      ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, undefined, {
+        silent: true
+      });
     } else {
       ctx.store.render();
     }
@@ -4859,7 +4863,7 @@ module.exports = function (ctx, api) {
   return api;
 };
 
-},{"./constants":23,"./feature_types/line_string":26,"./feature_types/multi_feature":27,"./feature_types/point":28,"./feature_types/polygon":29,"./lib/features_at":37,"./lib/string_set":47,"./lib/string_sets_are_equal":48,"@mapbox/geojson-normalize":7,"@mapbox/geojsonhint":8,"hat":14,"lodash.isequal":16}],23:[function(require,module,exports){
+},{"./constants":23,"./feature_types/circle":25,"./feature_types/line_string":27,"./feature_types/multi_feature":28,"./feature_types/point":29,"./feature_types/polygon":30,"./lib/features_at":39,"./lib/string_set":49,"./lib/string_sets_are_equal":50,"@mapbox/geojson-normalize":7,"@mapbox/geojsonhint":8,"hat":14,"lodash.isequal":16}],23:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -5238,7 +5242,43 @@ module.exports = function (ctx) {
   return api;
 };
 
-},{"./constants":23,"./lib/features_at":37,"./lib/get_features_and_set_cursor":38,"./lib/is_click":39,"./lib/is_tap":41,"./lib/mode_handler":43,"./modes/object_to_mode":59}],25:[function(require,module,exports){
+},{"./constants":23,"./lib/features_at":39,"./lib/get_features_and_set_cursor":40,"./lib/is_click":41,"./lib/is_tap":43,"./lib/mode_handler":45,"./modes/object_to_mode":61}],25:[function(require,module,exports){
+"use strict";
+
+var Polygon = require("./polygon");
+var Constants = require("../constants");
+var createGeoJSONCircle = require("../lib/create_geo_json_circle");
+
+var Circle = function Circle(ctx, geojson) {
+  Polygon.call(this, ctx, geojson);
+  var toGeoJSON = this.toGeoJSON.bind(this);
+  this.toGeoJSON = function () {
+    var geoJSON = toGeoJSON();
+    return Object.assign({}, geoJSON, {
+      properties: Object.assign({}, this.properties, {
+        circle: true,
+        class: Constants.types.CIRCLE
+      }),
+      geometry: Object.assign({}, geoJSON.geometry, {
+        center: this.center,
+        radius: this.radius
+      })
+    });
+  };
+};
+
+Circle.prototype = Object.create(Polygon.prototype);
+
+Circle.prototype.updateCenter = function (delta) {
+  this.center = [this.center[0] + delta.lng, this.center[1] + delta.lat];
+
+  var coords = createGeoJSONCircle([this.center[0], this.center[1]], this.radius);
+  this.setCoordinates([coords]);
+};
+
+module.exports = Circle;
+
+},{"../constants":23,"../lib/create_geo_json_circle":33,"./polygon":30}],26:[function(require,module,exports){
 'use strict';
 
 var hat = require('hat');
@@ -5312,7 +5352,7 @@ Feature.prototype.internal = function (mode) {
 
 module.exports = Feature;
 
-},{"../constants":23,"hat":14}],26:[function(require,module,exports){
+},{"../constants":23,"hat":14}],27:[function(require,module,exports){
 'use strict';
 
 var Feature = require('./feature');
@@ -5351,7 +5391,7 @@ LineString.prototype.updateCoordinate = function (path, lng, lat) {
 
 module.exports = LineString;
 
-},{"./feature":25}],27:[function(require,module,exports){
+},{"./feature":26}],28:[function(require,module,exports){
 'use strict';
 
 var Feature = require('./feature');
@@ -5442,7 +5482,7 @@ MultiFeature.prototype.getFeatures = function () {
 
 module.exports = MultiFeature;
 
-},{"../constants":23,"./feature":25,"./line_string":26,"./point":28,"./polygon":29,"hat":14}],28:[function(require,module,exports){
+},{"../constants":23,"./feature":26,"./line_string":27,"./point":29,"./polygon":30,"hat":14}],29:[function(require,module,exports){
 'use strict';
 
 var Feature = require('./feature');
@@ -5472,7 +5512,7 @@ Point.prototype.getCoordinate = function () {
 
 module.exports = Point;
 
-},{"./feature":25}],29:[function(require,module,exports){
+},{"./feature":26}],30:[function(require,module,exports){
 'use strict';
 
 var Feature = require('./feature');
@@ -5561,7 +5601,7 @@ Polygon.prototype.updateCoordinate = function (path, lng, lat) {
 
 module.exports = Polygon;
 
-},{"./feature":25}],30:[function(require,module,exports){
+},{"./feature":26}],31:[function(require,module,exports){
 'use strict';
 
 var Constants = require('../constants');
@@ -5619,7 +5659,7 @@ module.exports = {
   }
 };
 
-},{"../constants":23}],31:[function(require,module,exports){
+},{"../constants":23}],32:[function(require,module,exports){
 'use strict';
 
 var extent = require('@mapbox/geojson-extent');
@@ -5688,7 +5728,32 @@ module.exports = function (geojsonFeatures, delta) {
   return constrainedDelta;
 };
 
-},{"../constants":23,"@mapbox/geojson-extent":6}],32:[function(require,module,exports){
+},{"../constants":23,"@mapbox/geojson-extent":6}],33:[function(require,module,exports){
+"use strict";
+
+module.exports = function (coordinates, radius) {
+  var degrees_between_points = 6.0;
+  var number_of_points = Math.floor(360 / degrees_between_points);
+  var dist_radians = radius / 6250;
+  var center_lat_radians = coordinates[1] * Math.PI / 180;
+  var center_lon_radians = coordinates[0] * Math.PI / 180;
+  var polygon_coordinates = [];
+
+  for (var index = 0; index < number_of_points; index++) {
+    var degrees = index * degrees_between_points;
+    var degree_radians = degrees * Math.PI / 180;
+    var point_lat_radians = Math.asin(Math.sin(center_lat_radians) * Math.cos(dist_radians) + Math.cos(center_lat_radians) * Math.sin(dist_radians) * Math.cos(degree_radians));
+    var point_lon_radians = center_lon_radians + Math.atan2(Math.sin(degree_radians) * Math.sin(dist_radians) * Math.cos(center_lat_radians), Math.cos(dist_radians) - Math.sin(center_lat_radians) * Math.sin(point_lat_radians));
+    var point_lat = point_lat_radians * 180 / Math.PI;
+    var point_lon = point_lon_radians * 180 / Math.PI;
+    var point = [point_lon, point_lat];
+    polygon_coordinates.push(point);
+  }
+  polygon_coordinates.push(polygon_coordinates[0]);
+  return polygon_coordinates;
+};
+
+},{}],34:[function(require,module,exports){
 'use strict';
 
 var Constants = require('../constants');
@@ -5723,7 +5788,7 @@ module.exports = function (parent, startVertex, endVertex, map) {
   };
 };
 
-},{"../constants":23}],33:[function(require,module,exports){
+},{"../constants":23}],35:[function(require,module,exports){
 'use strict';
 
 var createVertex = require('./create_vertex');
@@ -5815,7 +5880,7 @@ function createSupplementaryPoints(geojson) {
 
 module.exports = createSupplementaryPoints;
 
-},{"../constants":23,"./create_midpoint":32,"./create_vertex":34}],34:[function(require,module,exports){
+},{"../constants":23,"./create_midpoint":34,"./create_vertex":36}],36:[function(require,module,exports){
 'use strict';
 
 var Constants = require('../constants');
@@ -5847,7 +5912,7 @@ module.exports = function (parentId, coordinates, path, selected) {
   };
 };
 
-},{"../constants":23}],35:[function(require,module,exports){
+},{"../constants":23}],37:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -5869,7 +5934,7 @@ module.exports = {
   }
 };
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 
 module.exports = function (a, b) {
@@ -5878,7 +5943,7 @@ module.exports = function (a, b) {
   return Math.sqrt(x * x + y * y);
 };
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 var sortFeatures = require('./sort_features');
@@ -5928,7 +5993,7 @@ function featuresAt(event, bbox, ctx, buffer) {
   return sortFeatures(uniqueFeatures);
 }
 
-},{"../constants":23,"./map_event_to_bounding_box":42,"./sort_features":46,"./string_set":47}],38:[function(require,module,exports){
+},{"../constants":23,"./map_event_to_bounding_box":44,"./sort_features":48,"./string_set":49}],40:[function(require,module,exports){
 'use strict';
 
 var featuresAt = require('./features_at');
@@ -5953,7 +6018,7 @@ module.exports = function getFeatureAtAndSetCursors(event, ctx) {
   return features[0];
 };
 
-},{"../constants":23,"./features_at":37}],39:[function(require,module,exports){
+},{"../constants":23,"./features_at":39}],41:[function(require,module,exports){
 'use strict';
 
 var euclideanDistance = require('./euclidean_distance');
@@ -5976,7 +6041,7 @@ module.exports = function isClick(start, end) {
   return moveDistance < fineTolerance || moveDistance < grossTolerance && end.time - start.time < interval;
 };
 
-},{"./euclidean_distance":36}],40:[function(require,module,exports){
+},{"./euclidean_distance":38}],42:[function(require,module,exports){
 "use strict";
 
 function isEventAtCoordinates(event, coordinates) {
@@ -5986,7 +6051,7 @@ function isEventAtCoordinates(event, coordinates) {
 
 module.exports = isEventAtCoordinates;
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 var euclideanDistance = require('./euclidean_distance');
@@ -6007,7 +6072,7 @@ module.exports = function isTap(start, end) {
   return moveDistance < tolerance && end.time - start.time < interval;
 };
 
-},{"./euclidean_distance":36}],42:[function(require,module,exports){
+},{"./euclidean_distance":38}],44:[function(require,module,exports){
 "use strict";
 
 /**
@@ -6024,7 +6089,7 @@ function mapEventToBoundingBox(mapEvent) {
 
 module.exports = mapEventToBoundingBox;
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 'use strict';
 
 var ModeHandler = function ModeHandler(mode, DrawContext) {
@@ -6141,7 +6206,7 @@ var ModeHandler = function ModeHandler(mode, DrawContext) {
 
 module.exports = ModeHandler;
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 var Point = require('@mapbox/point-geometry');
@@ -6161,7 +6226,7 @@ function mouseEventPoint(mouseEvent, container) {
 
 module.exports = mouseEventPoint;
 
-},{"@mapbox/point-geometry":11}],45:[function(require,module,exports){
+},{"@mapbox/point-geometry":11}],47:[function(require,module,exports){
 "use strict";
 
 var constrainFeatureMovement = require("./constrain_feature_movement");
@@ -6212,7 +6277,7 @@ module.exports = function (features, delta) {
   });
 };
 
-},{"../constants":23,"./constrain_feature_movement":31}],46:[function(require,module,exports){
+},{"../constants":23,"./constrain_feature_movement":32}],48:[function(require,module,exports){
 'use strict';
 
 var area = require('@mapbox/geojson-area');
@@ -6253,7 +6318,7 @@ function sortFeatures(features) {
 
 module.exports = sortFeatures;
 
-},{"../constants":23,"@mapbox/geojson-area":3}],47:[function(require,module,exports){
+},{"../constants":23,"@mapbox/geojson-area":3}],49:[function(require,module,exports){
 "use strict";
 
 function StringSet(items) {
@@ -6299,7 +6364,7 @@ StringSet.prototype.clear = function () {
 
 module.exports = StringSet;
 
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 "use strict";
 
 module.exports = function (a, b) {
@@ -6311,7 +6376,7 @@ module.exports = function (a, b) {
   }).sort());
 };
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 module.exports = [{
@@ -6482,7 +6547,7 @@ module.exports = [{
   }
 }];
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 "use strict";
 
 function throttle(fn, time, context) {
@@ -6515,7 +6580,7 @@ function throttle(fn, time, context) {
 
 module.exports = throttle;
 
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 
 /**
@@ -6532,7 +6597,7 @@ function toDenseArray(x) {
 
 module.exports = toDenseArray;
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 var _require = require('../lib/common_selectors'),
@@ -6788,7 +6853,7 @@ DirectSelect.onTouchEnd = DirectSelect.onMouseUp = function (state) {
 
 module.exports = DirectSelect;
 
-},{"../constants":23,"../lib/common_selectors":30,"../lib/constrain_feature_movement":31,"../lib/create_supplementary_points":33,"../lib/double_click_zoom":35,"../lib/move_features":45}],53:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/constrain_feature_movement":32,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/move_features":47}],55:[function(require,module,exports){
 'use strict';
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -6945,7 +7010,7 @@ DrawLineString.toDisplayFeatures = function (state, geojson, display) {
 
 module.exports = DrawLineString;
 
-},{"../constants":23,"../lib/common_selectors":30,"../lib/create_vertex":34,"../lib/double_click_zoom":35,"../lib/is_event_at_coordinates":40}],54:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":42}],56:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -7014,7 +7079,7 @@ DrawPoint.onKeyUp = function (state, e) {
 
 module.exports = DrawPoint;
 
-},{"../constants":23,"../lib/common_selectors":30}],55:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31}],57:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -7157,7 +7222,7 @@ DrawPolygon.onTrash = function (state) {
 
 module.exports = DrawPolygon;
 
-},{"../constants":23,"../lib/common_selectors":30,"../lib/create_vertex":34,"../lib/double_click_zoom":35,"../lib/is_event_at_coordinates":40}],56:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":42}],58:[function(require,module,exports){
 'use strict';
 
 var modes = ['simple_select', 'direct_select', 'draw_point', 'draw_polygon', 'draw_line_string'];
@@ -7175,7 +7240,7 @@ module.exports = {
   draw_line_string: require('./draw_line_string')
 };
 
-},{"./direct_select":52,"./draw_line_string":53,"./draw_point":54,"./draw_polygon":55,"./simple_select":60}],57:[function(require,module,exports){
+},{"./direct_select":54,"./draw_line_string":55,"./draw_point":56,"./draw_polygon":57,"./simple_select":62}],59:[function(require,module,exports){
 'use strict';
 
 var ModeInterface = module.exports = require('./mode_interface_accessors');
@@ -7324,7 +7389,7 @@ ModeInterface.prototype.toDisplayFeatures = function () {
   throw new Error('You must overwrite toDisplayFeatures');
 };
 
-},{"./mode_interface_accessors":58}],58:[function(require,module,exports){
+},{"./mode_interface_accessors":60}],60:[function(require,module,exports){
 'use strict';
 
 var Constants = require('../constants');
@@ -7559,7 +7624,7 @@ ModeInterface.prototype.doRender = function (id) {
   return this._ctx.store.featureChanged(id);
 };
 
-},{"../constants":23,"../feature_types/line_string":26,"../feature_types/multi_feature":27,"../feature_types/point":28,"../feature_types/polygon":29,"../lib/features_at":37}],59:[function(require,module,exports){
+},{"../constants":23,"../feature_types/line_string":27,"../feature_types/multi_feature":28,"../feature_types/point":29,"../feature_types/polygon":30,"../lib/features_at":39}],61:[function(require,module,exports){
 'use strict';
 
 var ModeInterface = require('./mode_interface');
@@ -7642,7 +7707,7 @@ module.exports = function (modeObject) {
   };
 };
 
-},{"./mode_interface":57}],60:[function(require,module,exports){
+},{"./mode_interface":59}],62:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -8052,7 +8117,7 @@ SimpleSelect.onUncombineFeatures = function () {
 
 module.exports = SimpleSelect;
 
-},{"../constants":23,"../lib/common_selectors":30,"../lib/create_supplementary_points":33,"../lib/double_click_zoom":35,"../lib/mouse_event_point":44,"../lib/move_features":45,"../lib/string_set":47}],61:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/mouse_event_point":46,"../lib/move_features":47,"../lib/string_set":49}],63:[function(require,module,exports){
 'use strict';
 
 var xtend = require('xtend');
@@ -8123,7 +8188,7 @@ module.exports = function () {
   return withDefaults;
 };
 
-},{"./constants":23,"./lib/theme":49,"./modes":56,"xtend":21}],62:[function(require,module,exports){
+},{"./constants":23,"./lib/theme":51,"./modes":58,"xtend":21}],64:[function(require,module,exports){
 'use strict';
 
 var Constants = require('./constants');
@@ -8228,7 +8293,7 @@ module.exports = function render() {
   }
 };
 
-},{"./constants":23}],63:[function(require,module,exports){
+},{"./constants":23}],65:[function(require,module,exports){
 "use strict";
 
 var events = require("./events");
@@ -8333,7 +8398,7 @@ module.exports = function (ctx) {
   return setup;
 };
 
-},{"./constants":23,"./events":24,"./store":64,"./ui":65}],64:[function(require,module,exports){
+},{"./constants":23,"./events":24,"./store":66,"./ui":67}],66:[function(require,module,exports){
 'use strict';
 
 var throttle = require('./lib/throttle');
@@ -8713,7 +8778,7 @@ Store.prototype.getInitialConfigValue = function (interaction) {
   }
 };
 
-},{"./constants":23,"./lib/string_set":47,"./lib/throttle":50,"./lib/to_dense_array":51,"./render":62}],65:[function(require,module,exports){
+},{"./constants":23,"./lib/string_set":49,"./lib/throttle":52,"./lib/to_dense_array":53,"./render":64}],67:[function(require,module,exports){
 "use strict";
 
 var xtend = require("xtend");
