@@ -1,6 +1,6 @@
 const modes = [
   "simple_select",
-  'draw_circle"
+  "draw_circle",
   "direct_select",
   "draw_point",
   "draw_polygon",

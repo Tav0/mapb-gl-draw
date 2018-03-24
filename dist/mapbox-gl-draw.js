@@ -32,7 +32,7 @@ module.exports = function (options) {
 
 module.exports.modes = require("./src/modes");
 
-},{"./src/api":22,"./src/constants":23,"./src/modes":58,"./src/options":63,"./src/setup":65}],2:[function(require,module,exports){
+},{"./src/api":22,"./src/constants":23,"./src/modes":60,"./src/options":65,"./src/setup":67}],2:[function(require,module,exports){
 module.exports = Extent;
 
 function Extent(bbox) {
@@ -4863,7 +4863,7 @@ module.exports = function (ctx, api) {
   return api;
 };
 
-},{"./constants":23,"./feature_types/circle":25,"./feature_types/line_string":27,"./feature_types/multi_feature":28,"./feature_types/point":29,"./feature_types/polygon":30,"./lib/features_at":39,"./lib/string_set":49,"./lib/string_sets_are_equal":50,"@mapbox/geojson-normalize":7,"@mapbox/geojsonhint":8,"hat":14,"lodash.isequal":16}],23:[function(require,module,exports){
+},{"./constants":23,"./feature_types/circle":25,"./feature_types/line_string":27,"./feature_types/multi_feature":28,"./feature_types/point":29,"./feature_types/polygon":30,"./lib/features_at":39,"./lib/string_set":50,"./lib/string_sets_are_equal":51,"@mapbox/geojson-normalize":7,"@mapbox/geojsonhint":8,"hat":14,"lodash.isequal":16}],23:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -5242,7 +5242,7 @@ module.exports = function (ctx) {
   return api;
 };
 
-},{"./constants":23,"./lib/features_at":39,"./lib/get_features_and_set_cursor":40,"./lib/is_click":41,"./lib/is_tap":43,"./lib/mode_handler":45,"./modes/object_to_mode":61}],25:[function(require,module,exports){
+},{"./constants":23,"./lib/features_at":39,"./lib/get_features_and_set_cursor":41,"./lib/is_click":42,"./lib/is_tap":44,"./lib/mode_handler":46,"./modes/object_to_mode":63}],25:[function(require,module,exports){
 "use strict";
 
 var Polygon = require("./polygon");
@@ -5993,7 +5993,25 @@ function featuresAt(event, bbox, ctx, buffer) {
   return sortFeatures(uniqueFeatures);
 }
 
-},{"../constants":23,"./map_event_to_bounding_box":44,"./sort_features":48,"./string_set":49}],40:[function(require,module,exports){
+},{"../constants":23,"./map_event_to_bounding_box":45,"./sort_features":49,"./string_set":50}],40:[function(require,module,exports){
+"use strict";
+
+module.exports = function (lat1, lon1, lat2, lon2) {
+  var R = 6371;
+  var dLat = deg2rad(lat2 - lat1);
+  var dLon = deg2rad(lon2 - lon1);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return d;
+};
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+},{}],41:[function(require,module,exports){
 'use strict';
 
 var featuresAt = require('./features_at');
@@ -6018,7 +6036,7 @@ module.exports = function getFeatureAtAndSetCursors(event, ctx) {
   return features[0];
 };
 
-},{"../constants":23,"./features_at":39}],41:[function(require,module,exports){
+},{"../constants":23,"./features_at":39}],42:[function(require,module,exports){
 'use strict';
 
 var euclideanDistance = require('./euclidean_distance');
@@ -6041,7 +6059,7 @@ module.exports = function isClick(start, end) {
   return moveDistance < fineTolerance || moveDistance < grossTolerance && end.time - start.time < interval;
 };
 
-},{"./euclidean_distance":38}],42:[function(require,module,exports){
+},{"./euclidean_distance":38}],43:[function(require,module,exports){
 "use strict";
 
 function isEventAtCoordinates(event, coordinates) {
@@ -6051,7 +6069,7 @@ function isEventAtCoordinates(event, coordinates) {
 
 module.exports = isEventAtCoordinates;
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 var euclideanDistance = require('./euclidean_distance');
@@ -6072,7 +6090,7 @@ module.exports = function isTap(start, end) {
   return moveDistance < tolerance && end.time - start.time < interval;
 };
 
-},{"./euclidean_distance":38}],44:[function(require,module,exports){
+},{"./euclidean_distance":38}],45:[function(require,module,exports){
 "use strict";
 
 /**
@@ -6089,7 +6107,7 @@ function mapEventToBoundingBox(mapEvent) {
 
 module.exports = mapEventToBoundingBox;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 var ModeHandler = function ModeHandler(mode, DrawContext) {
@@ -6206,7 +6224,7 @@ var ModeHandler = function ModeHandler(mode, DrawContext) {
 
 module.exports = ModeHandler;
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 var Point = require('@mapbox/point-geometry');
@@ -6226,7 +6244,7 @@ function mouseEventPoint(mouseEvent, container) {
 
 module.exports = mouseEventPoint;
 
-},{"@mapbox/point-geometry":11}],47:[function(require,module,exports){
+},{"@mapbox/point-geometry":11}],48:[function(require,module,exports){
 "use strict";
 
 var constrainFeatureMovement = require("./constrain_feature_movement");
@@ -6277,7 +6295,7 @@ module.exports = function (features, delta) {
   });
 };
 
-},{"../constants":23,"./constrain_feature_movement":32}],48:[function(require,module,exports){
+},{"../constants":23,"./constrain_feature_movement":32}],49:[function(require,module,exports){
 'use strict';
 
 var area = require('@mapbox/geojson-area');
@@ -6318,7 +6336,7 @@ function sortFeatures(features) {
 
 module.exports = sortFeatures;
 
-},{"../constants":23,"@mapbox/geojson-area":3}],49:[function(require,module,exports){
+},{"../constants":23,"@mapbox/geojson-area":3}],50:[function(require,module,exports){
 "use strict";
 
 function StringSet(items) {
@@ -6364,7 +6382,7 @@ StringSet.prototype.clear = function () {
 
 module.exports = StringSet;
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 
 module.exports = function (a, b) {
@@ -6376,7 +6394,7 @@ module.exports = function (a, b) {
   }).sort());
 };
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 module.exports = [{
@@ -6547,7 +6565,7 @@ module.exports = [{
   }
 }];
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 
 function throttle(fn, time, context) {
@@ -6580,7 +6598,7 @@ function throttle(fn, time, context) {
 
 module.exports = throttle;
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 
 /**
@@ -6597,7 +6615,7 @@ function toDenseArray(x) {
 
 module.exports = toDenseArray;
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 var _require = require('../lib/common_selectors'),
@@ -6853,7 +6871,142 @@ DirectSelect.onTouchEnd = DirectSelect.onMouseUp = function (state) {
 
 module.exports = DirectSelect;
 
-},{"../constants":23,"../lib/common_selectors":31,"../lib/constrain_feature_movement":32,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/move_features":47}],55:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/constrain_feature_movement":32,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/move_features":48}],56:[function(require,module,exports){
+"use strict";
+
+var CommonSelectors = require("../lib/common_selectors");
+var Circle = require("../feature_types/circle");
+var doubleClickZoom = require("../lib/double_click_zoom");
+var Constants = require("../constants");
+var isEventAtCoordinates = require("../lib/is_event_at_coordinates");
+var createVertex = require("../lib/create_vertex");
+var distance = require("../lib/geo_distance");
+var createGeoJSONCircle = require("../lib/create_geo_json_circle");
+
+module.exports = function (ctx) {
+
+  var polygon = new Circle(ctx, {
+    type: Constants.geojsonTypes.FEATURE,
+    properties: {
+      circle: true,
+      class: Constants.types.CIRCLE
+    },
+    geometry: {
+      type: Constants.geojsonTypes.POLYGON,
+      coordinates: [[]]
+    }
+  });
+  var currentVertexPosition = 0;
+
+  if (ctx._test) ctx._test.polygon = polygon;
+  ctx.store.add(polygon);
+
+  return {
+    start: function start() {
+      ctx.store.clearSelected();
+      doubleClickZoom.disable(ctx);
+      ctx.ui.queueMapClasses({ mouse: Constants.cursors.ADD });
+      ctx.ui.setActiveButton(Constants.types.CIRCLE);
+      this.on("mousemove", CommonSelectors.true, function (e) {
+        if (currentVertexPosition === 0) return;
+        var radius = distance(polygon.center[1], polygon.center[0], e.lngLat.lat, e.lngLat.lng);
+        var coords = createGeoJSONCircle(polygon.center, radius);
+        polygon.radius = radius;
+        polygon.setCoordinates([coords]);
+        currentVertexPosition = coords.length;
+        if (CommonSelectors.isVertex(e)) {
+          ctx.ui.queueMapClasses({ mouse: Constants.cursors.POINTER });
+        }
+      });
+      this.on("click", CommonSelectors.true, function (e) {
+        if (currentVertexPosition > 0) {
+          return ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [polygon.id] });
+        }
+        ctx.ui.queueMapClasses({ mouse: Constants.cursors.ADD });
+
+        polygon.center = [e.lngLat.lng, e.lngLat.lat];
+        var coords = createGeoJSONCircle([e.lngLat.lng, e.lngLat.lat], 100);
+        polygon.setCoordinates([coords]);
+        currentVertexPosition = coords.length;
+      });
+      this.on("click", CommonSelectors.isVertex, function () {
+        return ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [polygon.id] });
+      });
+      this.on("keyup", CommonSelectors.isEscapeKey, function () {
+        ctx.store.delete([polygon.id], { silent: true });
+        ctx.events.changeMode(Constants.modes.SIMPLE_SELECT);
+      });
+      this.on("keyup", CommonSelectors.isEnterKey, function () {
+        ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [polygon.id] });
+      });
+      ctx.events.actionable({
+        combineFeatures: false,
+        uncombineFeatures: false,
+        trash: true
+      });
+    },
+
+
+    stop: function stop() {
+      ctx.ui.queueMapClasses({ mouse: Constants.cursors.NONE });
+      doubleClickZoom.enable(ctx);
+      ctx.ui.setActiveButton();
+
+      // check to see if we've deleted this feature
+      if (ctx.store.get(polygon.id) === undefined) return;
+
+      //remove last added coordinate
+      polygon.removeCoordinate("0." + currentVertexPosition);
+      if (polygon.isValid()) {
+        ctx.map.fire(Constants.events.CREATE, {
+          features: [polygon.toGeoJSON()]
+        });
+      } else {
+        ctx.store.delete([polygon.id], { silent: true });
+        ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, {}, { silent: true });
+      }
+    },
+
+    render: function render(geojson, callback) {
+      var isActivePolygon = geojson.properties.id === polygon.id;
+      var parentClass = polygon.properties.class;
+      geojson.properties.active = isActivePolygon ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
+      if (!isActivePolygon) return callback(geojson);
+
+      // Don't render a polygon until it has two positions
+      // (and a 3rd which is just the first repeated)
+      if (geojson.geometry.coordinates.length === 0) return;
+
+      var coordinateCount = geojson.geometry.coordinates[0].length;
+
+      // If we have fewer than two positions (plus the closer),
+      // it's not yet a shape to render
+      if (coordinateCount < 3) return;
+
+      geojson.properties.meta = Constants.meta.FEATURE;
+
+      if (coordinateCount > 4) {
+        // Add a start position marker to the map, clicking on this will finish the feature
+        // This should only be shown when we're in a valid spot
+        callback(createVertex(polygon.id, geojson.geometry.coordinates[0][0], "0.0", false, parentClass));
+        var endPos = geojson.geometry.coordinates[0].length - 3;
+        callback(createVertex(polygon.id, geojson.geometry.coordinates[0][endPos], "0." + endPos, false, parentClass));
+      }
+
+      // If we have more than two positions (plus the closer),
+      // render the Polygon
+      if (coordinateCount > 3) {
+        return callback(geojson);
+      }
+    },
+    trash: function trash() {
+      ctx.store.delete([polygon.id], { silent: true });
+      ctx.events.changeMode(Constants.modes.SIMPLE_SELECT);
+    }
+  };
+};
+
+},{"../constants":23,"../feature_types/circle":25,"../lib/common_selectors":31,"../lib/create_geo_json_circle":33,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/geo_distance":40,"../lib/is_event_at_coordinates":43}],57:[function(require,module,exports){
 'use strict';
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -7010,7 +7163,7 @@ DrawLineString.toDisplayFeatures = function (state, geojson, display) {
 
 module.exports = DrawLineString;
 
-},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":42}],56:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":43}],58:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -7079,7 +7232,7 @@ DrawPoint.onKeyUp = function (state, e) {
 
 module.exports = DrawPoint;
 
-},{"../constants":23,"../lib/common_selectors":31}],57:[function(require,module,exports){
+},{"../constants":23,"../lib/common_selectors":31}],59:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -7222,25 +7375,26 @@ DrawPolygon.onTrash = function (state) {
 
 module.exports = DrawPolygon;
 
-},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":42}],58:[function(require,module,exports){
-'use strict';
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_vertex":36,"../lib/double_click_zoom":37,"../lib/is_event_at_coordinates":43}],60:[function(require,module,exports){
+"use strict";
 
-var modes = ['simple_select', 'direct_select', 'draw_point', 'draw_polygon', 'draw_line_string'];
+var modes = ["simple_select", "draw_circle", "direct_select", "draw_point", "draw_polygon", "draw_line_string"];
 
 module.exports = modes.reduce(function (m, k) {
-  m[k] = require('./' + k);
+  m[k] = require("./" + k);
   return m;
 }, {});
 
 module.exports = {
-  simple_select: require('./simple_select'),
-  direct_select: require('./direct_select'),
-  draw_point: require('./draw_point'),
-  draw_polygon: require('./draw_polygon'),
-  draw_line_string: require('./draw_line_string')
+  simple_select: require("./simple_select"),
+  direct_select: require("./direct_select"),
+  draw_circle: require("./draw_circle"),
+  draw_point: require("./draw_point"),
+  draw_polygon: require("./draw_polygon"),
+  draw_line_string: require("./draw_line_string")
 };
 
-},{"./direct_select":54,"./draw_line_string":55,"./draw_point":56,"./draw_polygon":57,"./simple_select":62}],59:[function(require,module,exports){
+},{"./direct_select":55,"./draw_circle":56,"./draw_line_string":57,"./draw_point":58,"./draw_polygon":59,"./simple_select":64}],61:[function(require,module,exports){
 'use strict';
 
 var ModeInterface = module.exports = require('./mode_interface_accessors');
@@ -7389,7 +7543,7 @@ ModeInterface.prototype.toDisplayFeatures = function () {
   throw new Error('You must overwrite toDisplayFeatures');
 };
 
-},{"./mode_interface_accessors":60}],60:[function(require,module,exports){
+},{"./mode_interface_accessors":62}],62:[function(require,module,exports){
 'use strict';
 
 var Constants = require('../constants');
@@ -7624,7 +7778,7 @@ ModeInterface.prototype.doRender = function (id) {
   return this._ctx.store.featureChanged(id);
 };
 
-},{"../constants":23,"../feature_types/line_string":27,"../feature_types/multi_feature":28,"../feature_types/point":29,"../feature_types/polygon":30,"../lib/features_at":39}],61:[function(require,module,exports){
+},{"../constants":23,"../feature_types/line_string":27,"../feature_types/multi_feature":28,"../feature_types/point":29,"../feature_types/polygon":30,"../lib/features_at":39}],63:[function(require,module,exports){
 'use strict';
 
 var ModeInterface = require('./mode_interface');
@@ -7707,7 +7861,7 @@ module.exports = function (modeObject) {
   };
 };
 
-},{"./mode_interface":59}],62:[function(require,module,exports){
+},{"./mode_interface":61}],64:[function(require,module,exports){
 'use strict';
 
 var CommonSelectors = require('../lib/common_selectors');
@@ -8117,11 +8271,11 @@ SimpleSelect.onUncombineFeatures = function () {
 
 module.exports = SimpleSelect;
 
-},{"../constants":23,"../lib/common_selectors":31,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/mouse_event_point":46,"../lib/move_features":47,"../lib/string_set":49}],63:[function(require,module,exports){
-'use strict';
+},{"../constants":23,"../lib/common_selectors":31,"../lib/create_supplementary_points":35,"../lib/double_click_zoom":37,"../lib/mouse_event_point":47,"../lib/move_features":48,"../lib/string_set":50}],65:[function(require,module,exports){
+"use strict";
 
-var xtend = require('xtend');
-var Constants = require('./constants');
+var xtend = require("xtend");
+var Constants = require("./constants");
 
 var defaultOptions = {
   defaultMode: Constants.modes.SIMPLE_SELECT,
@@ -8131,8 +8285,8 @@ var defaultOptions = {
   touchBuffer: 25,
   boxSelect: true,
   displayControlsDefault: true,
-  styles: require('./lib/theme'),
-  modes: require('./modes'),
+  styles: require("./lib/theme"),
+  modes: require("./modes"),
   controls: {},
   userProperties: false
 };
@@ -8141,6 +8295,7 @@ var showControls = {
   point: true,
   line_string: true,
   polygon: true,
+  circle: true,
   trash: true,
   combine_features: true,
   uncombine_features: true
@@ -8148,6 +8303,7 @@ var showControls = {
 
 var hideControls = {
   point: false,
+  circle: false,
   line_string: false,
   polygon: false,
   trash: false,
@@ -8159,8 +8315,8 @@ function addSources(styles, sourceBucket) {
   return styles.map(function (style) {
     if (style.source) return style;
     return xtend(style, {
-      id: style.id + '.' + sourceBucket,
-      source: sourceBucket === 'hot' ? Constants.sources.HOT : Constants.sources.COLD
+      id: style.id + "." + sourceBucket,
+      source: sourceBucket === "hot" ? Constants.sources.HOT : Constants.sources.COLD
     });
   });
 }
@@ -8183,12 +8339,12 @@ module.exports = function () {
   withDefaults = xtend(defaultOptions, withDefaults);
 
   // Layers with a shared source should be adjacent for performance reasons
-  withDefaults.styles = addSources(withDefaults.styles, 'cold').concat(addSources(withDefaults.styles, 'hot'));
+  withDefaults.styles = addSources(withDefaults.styles, "cold").concat(addSources(withDefaults.styles, "hot"));
 
   return withDefaults;
 };
 
-},{"./constants":23,"./lib/theme":51,"./modes":58,"xtend":21}],64:[function(require,module,exports){
+},{"./constants":23,"./lib/theme":52,"./modes":60,"xtend":21}],66:[function(require,module,exports){
 'use strict';
 
 var Constants = require('./constants');
@@ -8293,7 +8449,7 @@ module.exports = function render() {
   }
 };
 
-},{"./constants":23}],65:[function(require,module,exports){
+},{"./constants":23}],67:[function(require,module,exports){
 "use strict";
 
 var events = require("./events");
@@ -8398,7 +8554,7 @@ module.exports = function (ctx) {
   return setup;
 };
 
-},{"./constants":23,"./events":24,"./store":66,"./ui":67}],66:[function(require,module,exports){
+},{"./constants":23,"./events":24,"./store":68,"./ui":69}],68:[function(require,module,exports){
 'use strict';
 
 var throttle = require('./lib/throttle');
@@ -8778,7 +8934,7 @@ Store.prototype.getInitialConfigValue = function (interaction) {
   }
 };
 
-},{"./constants":23,"./lib/string_set":49,"./lib/throttle":52,"./lib/to_dense_array":53,"./render":64}],67:[function(require,module,exports){
+},{"./constants":23,"./lib/string_set":50,"./lib/throttle":53,"./lib/to_dense_array":54,"./render":66}],69:[function(require,module,exports){
 "use strict";
 
 var xtend = require("xtend");
