@@ -8237,7 +8237,6 @@ var ui = require("./ui");
 var Constants = require("./constants");
 
 module.exports = function (ctx) {
-
   var controlContainer = null;
 
   var setup = {
@@ -8723,7 +8722,6 @@ var Constants = require("./constants");
 var classTypes = ["mode", "feature", "mouse"];
 
 module.exports = function (ctx) {
-
   var buttonElements = {};
   var activeButton = null;
 
@@ -8817,6 +8815,7 @@ module.exports = function (ctx) {
     var controlGroup = document.createElement("div");
     controlGroup.className = Constants.classes.CONTROL_GROUP + " " + Constants.classes.CONTROL_BASE;
 
+    debugger;
     if (!controls) return controlGroup;
 
     if (controls[Constants.types.LINE]) {
