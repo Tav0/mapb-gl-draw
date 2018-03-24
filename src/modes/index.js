@@ -1,10 +1,10 @@
-
 const modes = [
-  'simple_select',
-  'direct_select',
-  'draw_point',
-  'draw_polygon',
-  'draw_line_string'
+  "simple_select",
+  'draw_circle"
+  "direct_select",
+  "draw_point",
+  "draw_polygon",
+  "draw_line_string"
 ];
 
 module.exports = modes.reduce((m, k) => {
@@ -13,10 +13,10 @@ module.exports = modes.reduce((m, k) => {
 }, {});
 
 module.exports = {
-  simple_select: require('./simple_select'),
-  direct_select: require('./direct_select'),
-  draw_point: require('./draw_point'),
-  draw_polygon: require('./draw_polygon'),
-  draw_line_string: require('./draw_line_string'),
+  simple_select: require("./simple_select"),
+  direct_select: require("./direct_select"),
+  draw_circle: require("./draw_circle"),
+  draw_point: require("./draw_point"),
+  draw_polygon: require("./draw_polygon"),
+  draw_line_string: require("./draw_line_string")
 };
-
