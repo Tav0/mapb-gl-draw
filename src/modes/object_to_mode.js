@@ -1,4 +1,4 @@
-const ModeInterface = require('./mode_interface');
+const ModeInterface = require("./mode_interface");
 
 module.exports = function(modeObject) {
   const modeObjectKeys = Object.keys(modeObject);
@@ -19,19 +19,20 @@ module.exports = function(modeObject) {
 
     return {
       start: function() {
+        debugger;
         state = mode.onSetup(startOpts); // this should set ui buttons
-        this.on('drag', () => true, wrapper('onDrag'));
-        this.on('click', () => true, wrapper('onClick'));
-        this.on('mousemove', () => true, wrapper('onMouseMove'));
-        this.on('mousedown', () => true, wrapper('onMouseDown'));
-        this.on('mouseup', () => true, wrapper('onMouseUp'));
-        this.on('mouseout', () => true, wrapper('onMouseOut'));
-        this.on('keyup', () => true, wrapper('onKeyUp'));
-        this.on('keydown', () => true, wrapper('onKeyDown'));
-        this.on('touchstart', () => true, wrapper('onTouchStart'));
-        this.on('touchmove', () => true, wrapper('onTouchMove'));
-        this.on('touchend', () => true, wrapper('onTouchEnd'));
-        this.on('tap', () => true, wrapper('onTap'));
+        this.on("drag", () => true, wrapper("onDrag"));
+        this.on("click", () => true, wrapper("onClick"));
+        this.on("mousemove", () => true, wrapper("onMouseMove"));
+        this.on("mousedown", () => true, wrapper("onMouseDown"));
+        this.on("mouseup", () => true, wrapper("onMouseUp"));
+        this.on("mouseout", () => true, wrapper("onMouseOut"));
+        this.on("keyup", () => true, wrapper("onKeyUp"));
+        this.on("keydown", () => true, wrapper("onKeyDown"));
+        this.on("touchstart", () => true, wrapper("onTouchStart"));
+        this.on("touchmove", () => true, wrapper("onTouchMove"));
+        this.on("touchend", () => true, wrapper("onTouchEnd"));
+        this.on("tap", () => true, wrapper("onTap"));
       },
       stop: function() {
         mode.onStop(state);
@@ -46,6 +47,7 @@ module.exports = function(modeObject) {
         mode.onUncombineFeatures(state);
       },
       render: function(geojson, push) {
+        debugger;
         mode.toDisplayFeatures(state, geojson, push);
       }
     };

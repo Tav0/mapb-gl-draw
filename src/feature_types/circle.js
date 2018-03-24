@@ -3,9 +3,10 @@ const Constants = require("../constants");
 const createGeoJSONCircle = require("../lib/create_geo_json_circle");
 
 var Circle = function(ctx, geojson) {
+  debugger;
   Polygon.call(this, ctx, geojson);
   const toGeoJSON = this.toGeoJSON.bind(this);
-  this.toGeoJSON = function () {
+  this.toGeoJSON = function() {
     const geoJSON = toGeoJSON();
     return Object.assign({}, geoJSON, {
       properties: Object.assign({}, this.properties, {
@@ -22,13 +23,13 @@ var Circle = function(ctx, geojson) {
 
 Circle.prototype = Object.create(Polygon.prototype);
 
-Circle.prototype.updateCenter = function (delta) {
-  this.center = [
-    this.center[0] + delta.lng,
-    this.center[1] + delta.lat
-  ];
+Circle.prototype.updateCenter = function(delta) {
+  this.center = [this.center[0] + delta.lng, this.center[1] + delta.lat];
 
-  const coords = createGeoJSONCircle([this.center[0], this.center[1]], this.radius);
+  const coords = createGeoJSONCircle(
+    [this.center[0], this.center[1]],
+    this.radius
+  );
   this.setCoordinates([coords]);
 };
 

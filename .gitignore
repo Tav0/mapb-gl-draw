@@ -3,3 +3,4 @@ npm-debug.log
 .vscode/
 coverage/
 .nyc_output/
+.*.sw*
